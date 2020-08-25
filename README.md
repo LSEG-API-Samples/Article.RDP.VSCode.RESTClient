@@ -1,4 +1,4 @@
-# How to use Visual Studio Code - REST Client extensions to request RDP APIs content
+# How to test Refinitiv Data Platform REST API easily with Visual Studio Code - REST Client extensions
 - version: 1.0
 - Last update: August 2020
 - Environment: Windows
@@ -145,7 +145,7 @@ The extension will parse the above Request Lines to ```https://api.refinitiv.com
 
 Note: the variable name **must not** contain any spaces.
 
-### <a id="request variable"></a>Variables: Request Variables
+### <a id="request_variable"></a>Variables: Request Variables
 
 You can declare *Request Variables* to get a request or response message content. The syntax is just ```# @name requestName``` on a line before the Request Line. Once the request is sent, the script can access response (or request) message information from ```{{requestName.(response|request).(body|headers).(*|JSONPath|XPath|Header Name)}}``` syntax. 
 
