@@ -8,7 +8,7 @@
 
 [Visual Studio Code](https://code.visualstudio.com/) (or just VSCode) is a free source code editor developed and maintained by [Microsoft](https://github.com/Microsoft/vscode). This cross-platform editor took over developers popularity based on it fast and lightweight, supports variety of programming languages with IntelliSense (a feature that borrows from its sibling, Visual Studio IDE) and supports a complete development operations like debugging, task running and version control. 
 
-VSCode also supports a lot of extensions which extends the editor features and development workflow such as code linters or add new language support, etc. One of the most recent  extension is [REST Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client) allows developers send HTTP request and view the response in VSCode directly.
+VSCode also supports a lot of extensions which extends the editor features and development workflow such as code linters or add new language support, etc. One of the most recent  extension is [REST Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client) allows developers send HTTP request and view the response message in VSCode directly.
 
 This article demonstrates how to use the REST Client extension in VSCode by using [Refinitiv Data Platform (RDP) APIs](https://developers.refinitiv.com/refinitiv-data-platform/refinitiv-data-platform-apis) as an example HTTP REST API. Developers who currently use VSCode implement the RDP APIs application (with any languages) can use this extension to test the RDP APIs query, endpoint without switch to other tools like [Postman](https://www.postman.com/) or [cURL](https://curl.haxx.se/).
 
@@ -24,7 +24,21 @@ The [Refinitiv Data Platform (RDP) APIs](https://developers.refinitiv.com/refini
 * Bulks:  deliver substantial payloads, like the end of day pricing data for the whole venue. 
 * Streaming: deliver real-time delivery of messages.
 
-This article is focusing on the Request - Response: RESTful web service delivery method only.
+This article is focusing on the Request - Response: RESTful web service delivery method only. 
+
+For more detail regarding Refinitiv Data Platform, please see the [Quick Start](https://developers.refinitiv.com/refinitiv-data-platform/refinitiv-data-platform-apis/quick-start) and [Tutorials](https://developers.refinitiv.com/refinitiv-data-platform/refinitiv-data-platform-apis/learning) pages.
+
+### RDP APIs Application Workflow
+
+Refinitiv Data Platform entitlement check is based on OAuth 2.0 specification. The first step of an application work flow is to get a token from RDP Auth Service, which will allow access to the protected resource, i.e. data REST API's. 
+
+Next, after the application received the Access Token (an authorization token) from RDP Auth Service, all subsequent REST API calls will use this token to get the data. The application needs to input Access Token via *Authorization* HTTP request message header as shown below. 
+- Header: 
+    * Authorization = ```Bearer <RDP Access Token>```
+
+Please notice *the space* between the ```Bearer``` and ```RDP Access Token``` values.
+
+Please find more detail regarding RDP APIs workflow in [Introduction to the Request-Response API page](https://developers.refinitiv.com/refinitiv-data-platform/refinitiv-data-platform-apis/learning?content=38560&type=learning_material_item).
 
 ## VSCode REST Client Syntax
 
@@ -51,9 +65,11 @@ The file can contain multiple requests, each request is separated by ```###``` d
 
 The first line of request is the *Request Line*. It contains the request method (*GET* or *POST*), a space and then follow by the API url endpoint.
 
-Examples:
+Examples
 
 ```
+### RDP historical-pricing: retrieve time series pricing Interday summaries data
+
 GET https://api.refinitiv.com/data/historical-pricing/v1/views/interday-summaries/FB.O HTTP/1.1
 ```
 
@@ -66,6 +82,8 @@ GET https://api.refinitiv.com/data/historical-pricing/v1/views/interday-summarie
 or
 
 ```
+### RDP Auth Service
+
 POST https://api.refinitiv.com/auth/oauth2/v1/token HTTP/1.1
 ```
 
@@ -74,14 +92,18 @@ POST https://api.refinitiv.com/auth/oauth2/v1/token HTTP/1.1
 You can set the API query parameters into API URL directly as following:
 
 ```
+### RDP News Service: Get News Headlines
+
 GET https://api.refinitiv.com/data/news/v1/headlines?query="USA"
 ```
 
 If the request contains multiple parameters, you can split it to multiple lines. The REST Client extensions parse the lines in immediately after the Request Line which starts with ```?``` and ```&``` operations.
 
 ```
+### RDP ESG /VIEWS/MEASURES-FULL: Returns scores and measures with full history
+
 GET https://api.refinitiv.com/data/environmental-social-governance/v1/views/measures-full
-  ?universe={{symbol}}
+  ?universe=FB.O
   &start=-5
   &end=0 
 ```
@@ -91,6 +113,8 @@ GET https://api.refinitiv.com/data/environmental-social-governance/v1/views/meas
 The lines immediately after the *Request Line* are *Request Header*. The supported syntax is ```field-name: field-value``` format, each line represents one header. The Authentication also can be set in this Request Header section.
 
 ```
+### RDP ESG /UNIVERSE: Return the full universe available for ESG
+
 GET https://api.refinitiv.com/data/environmental-social-governance/v1/views/basic?universe=IBM.N HTTP/1.1
 Content-Type: application/json
 Authorization: Bearer <access_token>
@@ -121,14 +145,14 @@ The extension will parse the above Request Lines to ```https://api.refinitiv.com
 
 Note: the variable name **must not** contain any spaces.
 
-#### Variables: Request Variables
+### Variables: Request Variables
 
-You can declare *Request Variables* to get a request or response message content too. The syntax is just ```# @name requestName``` on a line before the Request Line. Once the request is sent, the script can access response (or request) message information from ```{{requestName.(response|request).(body|headers).(*|JSONPath|XPath|Header Name)}}``` syntax. 
+You can declare *Request Variables* to get a request or response message content. The syntax is just ```# @name requestName``` on a line before the Request Line. Once the request is sent, the script can access response (or request) message information from ```{{requestName.(response|request).(body|headers).(*|JSONPath|XPath|Header Name)}}``` syntax. 
 
 This feature is mandatory for RDP APIs because the consumer needs to get a token from RDP Auth Service first, then use that token to request further protected resource from the platform. 
 
 ```
-### RDP Auth
+### RDP Auth Service
 # @name rdpAuth
 
 POST {{baseUrl}}/auth/oauth2/{{rdpVersion}}/token HTTP/1.1
@@ -164,7 +188,11 @@ The *Request Body* can be set by adding a *blank line* after Request Header and 
 One example is the RDP Auth Service which use **application/x-www-form-urlencoded** Content-Type. This content-type uses key-value tuples separated by ```&```, with a ```=``` between the key and the value.
 
 ```
-POST https://api.refinitiv.com/auth/oauth2/v1/token HTTP/1.1
+### RDP Auth Service
+
+# @name rdpAuth
+
+POST {{baseUrl}}/auth/oauth2/{{rdpVersion}}/token HTTP/1.1
 Content-Type: application/x-www-form-urlencoded
 Authorization: token {{client_id}}
 Accept: application/json
@@ -174,7 +202,9 @@ username={{username}}&password={{password}}&client_id={{client_id}}&grant_type=p
 
 Example for **application/json** Content-Type:
 ```
-POST https://api.refinitiv.com/data/quantitative-analytics/v1/financial-contracts HTTP/1.1
+### RDP IPA /FINANCIAL-CONTRACTS: API endpoint for Financial Contract analytics, that returns calculations relevant to each contract type.
+
+POST {{baseUrl}}/data/quantitative-analytics/{{rdpVersion}}/financial-contracts HTTP/1.1
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
@@ -226,6 +256,14 @@ RDP_PASSWORD=<your RDP password>
 RDP_CLIENT_ID=<your RDP client id/app key>
 ```
 
+Please note that you *do not* need the ```""``` or ```''``` characters for a string value as the following example:
+
+```
+RDP_USERNAME=example@email.com
+RDP_PASSWORD=$$example_password%%
+RDP_CLIENT_ID=bbb_example_client_id_ccc
+```
+
 Now the VSCode editor is ready to request data from RDP REST APIs.
 
 ## <a id="how_to_run"></a>How to run the example
@@ -253,7 +291,7 @@ You can also select interested HTTP request and generate the source code for tha
 
 ## <a id="how_to_run"></a>Conclusion
 
-You may think "why would I bother use this extension when I already have a Postman". The Postman is a complete platform for API testing and development so it has much more features then this extension. However, this VSCode: REST Client extension lets developers do a quick REST API test call such as test various API query parameters, test new Service URL or test different credentials *in the same editor that they are developing the application*. Developers do not need to switch a tool for a quick REST API query test anymore. 
+You may think "why would I bother use this extension when I already have a Postman". The Postman is a complete platform for API testing and development so it has much more features then this extension. However, this VSCode: REST Client extension lets developers who are using this editor do a quick REST API test call such as test various API query parameters, test new Service URL or test different credentials *in the same tool that they are developing the application*. Developers do not need to switch a tool for a quick REST API query test anymore. 
 
 This extension helps RDP APIs developers (either who use the REST API directly or [RDP Libraries](https://developers.refinitiv.com/refinitiv-data-platform/refinitiv-data-platform-libraries)) with Visual Studio Code to implement application a smooth and seamless workflow.
 
@@ -265,4 +303,4 @@ For further details, please check out the following resources:
 * [Visual Studio Code product page](https://code.visualstudio.com/)
 * [VSCode: REST Client product page](https://marketplace.visualstudio.com/items?itemName=humao.rest-client) and [GitHub](https://github.com/Huachao/vscode-restclient).
 
-For any question related to Refinitiv Data Platform or Refinitiv Data Platform, please use the Developers Community [Q&A Forum](https://community.developers.refinitiv.com/spaces/231/index.html).
+For any question related to Refinitiv Data Platform, please use the Developers Community [Q&A Forum](https://community.developers.refinitiv.com/spaces/231/index.html).
