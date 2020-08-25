@@ -1,10 +1,10 @@
-# How to use Visual Studio Code - REST Client extends to request RDP APIs content
+# How to use Visual Studio Code - REST Client extensions to request RDP APIs content
 - version: 1.0
 - Last update: August 2020
 - Environment: Windows
 - Prerequisite: [Access to RDP credentials](#prerequisite) and [Visual Studio Code](https://code.visualstudio.com/)
 
-## Introduction
+## <a id="intro"></a>Introduction
 
 [Visual Studio Code](https://code.visualstudio.com/) (or just VSCode) is a free source code editor developed and maintained by [Microsoft](https://github.com/Microsoft/vscode). This cross-platform editor took over developers popularity based on it fast and lightweight, supports variety of programming languages with IntelliSense (a feature that borrows from its sibling, Visual Studio IDE) and supports a complete development operations like debugging, task running and version control. 
 
@@ -14,7 +14,7 @@ This article demonstrates how to use the REST Client extension in VSCode by usin
 
 Note: RDP APIs developers are still need [RDP APIs Playground page](https://api.refinitiv.com) to get the APIs document and information.
 
-## What is Refinitiv Data Platform (RDP) APIs?
+## <a id="whatis_rdp"></a>What is Refinitiv Data Platform (RDP) APIs?
 
 The [Refinitiv Data Platform (RDP) APIs](https://developers.refinitiv.com/refinitiv-data-platform/refinitiv-data-platform-apis) provide various Refinitiv data and content for developers via easy to use Web base API.
 
@@ -28,7 +28,7 @@ This article is focusing on the Request - Response: RESTful web service delivery
 
 For more detail regarding Refinitiv Data Platform, please see the [Quick Start](https://developers.refinitiv.com/refinitiv-data-platform/refinitiv-data-platform-apis/quick-start) and [Tutorials](https://developers.refinitiv.com/refinitiv-data-platform/refinitiv-data-platform-apis/learning) pages.
 
-### RDP APIs Application Workflow
+### <a id="rdp_workflow"></a>RDP APIs Application Workflow
 
 Refinitiv Data Platform entitlement check is based on OAuth 2.0 specification. The first step of an application work flow is to get a token from RDP Auth Service, which will allow access to the protected resource, i.e. data REST API's. 
 
@@ -40,7 +40,7 @@ Please notice *the space* between the ```Bearer``` and ```RDP Access Token``` va
 
 Please find more detail regarding RDP APIs workflow in [Introduction to the Request-Response API page](https://developers.refinitiv.com/refinitiv-data-platform/refinitiv-data-platform-apis/learning?content=38560&type=learning_material_item).
 
-## VSCode REST Client Syntax
+## <a id="restclient_syntax"></a>VSCode REST Client Syntax
 
 The REST Client plugin requires just a plain text file with extension ```.http``` or ```.rest```. The basic syntax is very simple as following
 
@@ -61,7 +61,7 @@ The REST Client plugin requires just a plain text file with extension ```.http``
 
 The file can contain multiple requests, each request is separated by ```###``` delimiter (three or more consecutive ```#```). 
 
-### Request Line
+### <a id="request_line"></a>Request Line
 
 The first line of request is the *Request Line*. It contains the request method (*GET* or *POST*), a space and then follow by the API url endpoint.
 
@@ -87,7 +87,7 @@ or
 POST https://api.refinitiv.com/auth/oauth2/v1/token HTTP/1.1
 ```
 
-### Request Line: Query Parameters
+### <a id="query"></a>Request Line: Query Parameters
 
 You can set the API query parameters into API URL directly as following:
 
@@ -108,7 +108,7 @@ GET https://api.refinitiv.com/data/environmental-social-governance/v1/views/meas
   &end=0 
 ```
 
-### Request Header
+### <a id="request_header"></a>Request Header
 
 The lines immediately after the *Request Line* are *Request Header*. The supported syntax is ```field-name: field-value``` format, each line represents one header. The Authentication also can be set in this Request Header section.
 
@@ -120,7 +120,7 @@ Content-Type: application/json
 Authorization: Bearer <access_token>
 ```
 
-### Variables
+### <a id="variables"></a>Variables
 
 You can declare you own File variables to keep the values and reuse them in the script such as API base endpoint, version with ```@variableName = variableValue``` syntax in a separate line from request block. Then the request can use the defined variable with ```{{variableName}}``` syntax. Please note that you *do not* need the ```""``` or ```''``` characters for a string value.
 
@@ -145,7 +145,7 @@ The extension will parse the above Request Lines to ```https://api.refinitiv.com
 
 Note: the variable name **must not** contain any spaces.
 
-### Variables: Request Variables
+### <a id="request variable"></a>Variables: Request Variables
 
 You can declare *Request Variables* to get a request or response message content. The syntax is just ```# @name requestName``` on a line before the Request Line. Once the request is sent, the script can access response (or request) message information from ```{{requestName.(response|request).(body|headers).(*|JSONPath|XPath|Header Name)}}``` syntax. 
 
@@ -181,7 +181,7 @@ For the full detail and explanation of RDP Authentication process application wo
 - [Introduction to the Request-Response API](https://developers.refinitiv.com/requestresponse-apis/learning?content=38560&type=learning_material_item).
 - [Authorization - All about tokens](https://developers.refinitiv.com/refinitiv-data-platform/refinitiv-data-platform-apis/learning?content=38562&type=learning_material_item).
 
-### Request Body
+### <a id="request_body"></a>Request Body
 
 The *Request Body* can be set by adding a *blank line* after Request Header and then place your HTTP request data in the next line. The request data can be various type of format such as JSON, XML or key-value tuples.
 
@@ -289,7 +289,7 @@ You can also select interested HTTP request and generate the source code for tha
 ![Figure-6](images/rest_client_gen_code.png "Generate Code") 
 
 
-## <a id="how_to_run"></a>Conclusion
+## <a id="conclusion"></a>Conclusion
 
 You may think "why would I bother use this extension when I already have a Postman". The Postman is a complete platform for API testing and development so it has much more features then this extension. However, this VSCode: REST Client extension lets developers who are using this editor do a quick REST API test call such as test various API query parameters, test new Service URL or test different credentials *in the same tool that they are developing the application*. Developers do not need to switch a tool for a quick REST API query test anymore. 
 
