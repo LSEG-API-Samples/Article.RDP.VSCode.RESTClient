@@ -8,7 +8,7 @@
 
 @client_id = {{$dotenv RDP_CLIENT_ID}}
 
-### RDP Auth
+### RDP Auth Service
 # @name rdpAuth
 
 POST {{baseUrl}}/auth/oauth2/{{rdpVersion}}/token HTTP/1.1
@@ -38,7 +38,7 @@ GET {{baseUrl}}/data/environmental-social-governance/{{rdpVersion}}/views/measur
   &end=0 
 Authorization: Bearer {{accessToken}}
 
-#### RDP IPA /FINANCIAL-CONTRACTS: API endpoint for Financial Contract analytics, that returns calculations relevant to each contract type.
+### RDP IPA /FINANCIAL-CONTRACTS: API endpoint for Financial Contract analytics, that returns calculations relevant to each contract type.
 
 POST {{baseUrl}}/data/quantitative-analytics/{{rdpVersion}}/financial-contracts HTTP/1.1
 Content-Type: application/json
